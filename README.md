@@ -1,5 +1,4 @@
 ﻿# Práctica No.2 - GAME OF LIFE
-Elaboración de un sistema bancario para cajeros automáticos estudiantiles
 
 Elaboración de un juego que implemente algoritmos, sentencias de control, ciclo y arreglos asi como la utilización de hilos (threads) para la solucion de un problema.
 
