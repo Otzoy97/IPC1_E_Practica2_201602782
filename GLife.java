@@ -27,15 +27,7 @@ public class GLife extends JFrame {
         init.show();
     }
     
-    private GLife(){
-        setTitle("Game of Life");
-        Loader obj = new Loader();
-        //
-        this.setLayout(new GridBagLayout());
-        GridBagConstraints bag = new GridBagConstraints();
-        this.setResizable(false);
-        Container cp = this.getContentPane();
-        //
+    private void showMessageDialog(){
         String str01 = JOptionPane.showInputDialog(null, "Ingrese el tamaño del tablero","Game of Life", JOptionPane.INFORMATION_MESSAGE);
         //
         if (str01!=null) {
@@ -52,16 +44,9 @@ public class GLife extends JFrame {
         } else {
             System.exit(0);
         }
-        //
-        pnl01 = new JPanel(new GridLayout(option,option));
-        pnl02 = new JPanel(new GridBagLayout());
-        GridBagConstraints bag01 = new GridBagConstraints();
-        //
-        pnl01.setBorder(BorderFactory.createLineBorder(Color.black));
-        //
-        REF =new int[(int)Math.pow(option,2)][(int)Math.pow(option,2)];
-        LBL =new JButton[(int)Math.pow(option,2)][(int)Math.pow(option,2)];
-        //
+    }
+    
+    private void gridLabel(){
         for (int y = 0 ; y < option ; y++){
             for (int x = 0 ; x < option ; x++) {
                 int xx = x;
@@ -81,6 +66,30 @@ public class GLife extends JFrame {
                 pnl01.add(LBL[x][y]);
             }
         }
+    }
+    
+    
+    private GLife(){
+        setTitle("Game of Life");
+        Loader obj = new Loader();
+        //
+        this.setLayout(new GridBagLayout());
+        GridBagConstraints bag = new GridBagConstraints();
+        this.setResizable(false);
+        Container cp = this.getContentPane();
+        //
+        showMessageDialog();   
+        //
+        pnl01 = new JPanel(new GridLayout(option,option));
+        pnl02 = new JPanel(new GridBagLayout());
+        GridBagConstraints bag01 = new GridBagConstraints();
+        //
+        pnl01.setBorder(BorderFactory.createLineBorder(Color.black));
+        //
+        REF = new int[(int)Math.pow(option,2)][(int)Math.pow(option,2)];
+        LBL = new JButton[(int)Math.pow(option,2)][(int)Math.pow(option,2)];
+        //
+        gridLabel();
         //
         status = new JToggleButton();
         status.setIcon(new ImageIcon(getClass().getResource("iniciar.png")));
@@ -92,26 +101,28 @@ public class GLife extends JFrame {
                     status.setIcon(new ImageIcon(getClass().getResource("pausa.png"))); 
                     
                     if (obj.getState()==Thread.State.TIMED_WAITING){
+                        obj.resume();
                         ESTADO = true;
                     } else if(obj.getState()==Thread.State.NEW){
                         obj.start();
                         ESTADO = true;
                     }
                 } else {
-                    ESTADO = false;
+                    obj.suspend();
+                    ESTADO = true;
                     status.setIcon(new ImageIcon(getClass().getResource("iniciar.png")));
                 }
             }
         });
         jslider = new JSlider();
+        jslider.setMajorTickSpacing(10);
+        jslider.setMinorTickSpacing(1);
+        jslider.setMinimum(1);
+        jslider.setMaximum(100);
         jslider.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent event){
-                if (jslider.getValue()!=0){
-                    VELOCIDAD = (long)(60000/jslider.getValue()) ;
-                } else {
-                    VELOCIDAD = 60000;
-                }
+                VELOCIDAD = (long)(10000/jslider.getValue()) ;
             }
         });
         //
@@ -137,7 +148,7 @@ public class GLife extends JFrame {
         this.pack();
         this.setLocationRelativeTo(null);
         //
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     }  
     
     class Loader extends Thread implements Runnable{
@@ -169,9 +180,9 @@ public class GLife extends JFrame {
         
         private Color radio(int x, int y){
             int contador = 0;
-            int aux1 = 0;
-            int aux2 = 0;
-            boolean aux3 = false;
+            int aux1;
+            int aux2;
+            boolean aux3;
             Color color = new Color(255,255,255);
             for (int i = -1 ; i < 2;i++ ){
                 for (int j = -1; j < 2 ; j++){
@@ -209,7 +220,6 @@ public class GLife extends JFrame {
     
         private void actualizar(){
             Color color1 = Color.black;
-            //Color color2 = Color.black;
             for (int i = 0 ; i < option ; i++ ){
                 for (int j = 0; j < option ; j++){
                     Color color = LBL[j][i].getBackground();
